@@ -1,4 +1,4 @@
-import { useState,useCallback,useEffect } from 'react'
+import { useState,useCallback,useEffect,useRef } from 'react'
 
 import './App.css'
 
@@ -7,6 +7,8 @@ function App() {
   const [numberAllowed,setNumberAllowed]=useState(false);
   const [charactersAllowed,setCharactersAllowed]=useState(false);
   const [password,setPassword]=useState("");
+  // useRef hook 
+  const passwordRef=useRef(null);
 
   const passwordGenerator=useCallback(()=>{
     let pass="";
@@ -22,6 +24,11 @@ function App() {
 
   },[length,numberAllowed,charactersAllowed,setPassword])
 
+  const copyPasswordToClipboard=useCallback(()=>{
+    passwordRef.current?.select();
+    passwordRef.current?.setSelectionRange(0,999);
+    window.navigator.clipboard.writeText(password);
+  },[password]);
   // Automatically triggers wheneer options change
   useEffect(()=>{
     passwordGenerator()
@@ -37,8 +44,11 @@ function App() {
             className='outline-none w-full py-1 px-3 bg-white text-black'
             placeholder='Password'
             readOnly
+            ref={passwordRef}
           />
-          <button className='outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0 hover:bg-blue-800 transition-colors'>Copy</button>
+          <button className='outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0 hover:bg-blue-800 transition-colors'
+          onClick={copyPasswordToClipboard}
+          >Copy</button>
         </div>
         
         <div className='flex text-sm gap-x-4 justify-center'>
